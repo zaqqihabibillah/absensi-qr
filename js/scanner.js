@@ -1,4 +1,4 @@
-import { auth, db, $, requireAuth, logout, localDate, localTime, attendanceId, doc, getDoc, getDocs, collection, query, where, orderBy, runTransaction, serverTimestamp, escapeHtml } from "./app.js";
+import { auth, db, $, requireAuth, logout, localDate, localTime, attendanceId, doc, getDoc, getDocs, collection, query, where, runTransaction, serverTimestamp, escapeHtml } from "./app.js";
 const user = await requireAuth();
 $("#logout-button").addEventListener("click", logout);
 const today = localDate();
@@ -11,11 +11,12 @@ const showResult = (kind, title, detail, time = localTime()) => {
   $("#scan-title").textContent = title; $("#scan-detail").textContent = detail; $("#result-time").textContent = time;
 };
 async function refreshToday() {
-  const q = query(collection(db,"absensi"), where("tanggal","==",today), orderBy("waktu","desc"));
+  const q = query(collection(db,"absensi"), where("tanggal","==",today));
   const snap = await getDocs(q);
+  const recent = snap.docs.map(d => d.data()).sort((a,b) => String(b.waktu||"").localeCompare(String(a.waktu||""))).slice(0,8);
   $("#today-count").textContent = snap.size;
-  $("#recent-body").innerHTML = snap.empty ? '<tr><td colspan="5" class="empty">Belum ada presensi hari ini.</td></tr>' : snap.docs.map(d => {
-    const a=d.data(); return `<tr><td>${escapeHtml(a.waktu)}</td><td>${escapeHtml(a.nisn)}</td><td>${escapeHtml(a.nama)}</td><td>${escapeHtml(a.kelas)}</td><td><span class="status hadir">${escapeHtml(a.status)}</span></td></tr>`;
+  $("#recent-body").innerHTML = recent.length === 0 ? '<tr><td colspan="5" class="empty">Belum ada presensi hari ini.</td></tr>' : recent.map(a => {
+    return `<tr><td>${escapeHtml(a.waktu)}</td><td>${escapeHtml(a.nisn)}</td><td>${escapeHtml(a.nama)}</td><td>${escapeHtml(a.kelas)}</td><td><span class="status hadir">${escapeHtml(a.status)}</span></td></tr>`;
   }).join("");
 }
 async function processQr(decodedText) {
