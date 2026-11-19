@@ -1,4 +1,4 @@
-import { auth, db, $, requireAuth, logout, localDate, localTime, attendanceId, doc, getDoc, getDocs, collection, query, where, orderBy, runTransaction, serverTimestamp, setDoc, escapeHtml } from "./app.js";
+import { auth, db, $, requireAuth, logout, localDate, localTime, attendanceId, doc, getDoc, getDocs, collection, query, where, runTransaction, serverTimestamp, setDoc, escapeHtml } from "./app.js";
 const user = await requireAuth(); $("#logout-button").addEventListener("click",logout);
 let students = [], csvRows = [];
 const today=localDate(); $("#report-date").value=today;
@@ -18,9 +18,9 @@ function renderStudents() {
 }
 async function loadReport() {
   const date=$("#report-date").value||today, cls=$("#report-class").value;
-  const q=query(collection(db,"absensi"),where("tanggal","==",date),orderBy("waktu","desc"));
+  const q=query(collection(db,"absensi"),where("tanggal","==",date));
   const snap=await getDocs(q);
-  const saved=snap.docs.map(d=>({id:d.id,...d.data()}));
+  const saved=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.waktu||"").localeCompare(String(a.waktu||"")));
   const filteredSaved=saved.filter(a=>!cls||a.kelas===cls);
   const active=students.filter(s=>s.aktif&&(!cls||s.kelas===cls));
   const savedByNisn=new Map(saved.map(a=>[a.nisn,a]));
@@ -77,8 +77,8 @@ $("#import-csv").addEventListener("click",async()=>{
 });
 $("#export-csv").addEventListener("click",async()=>{
  const date=$("#report-date").value||today, cls=$("#report-class").value;
- const snap=await getDocs(query(collection(db,"absensi"),where("tanggal","==",date),orderBy("waktu","asc")));
- const rows=snap.docs.map(d=>d.data()).filter(a=>!cls||a.kelas===cls);
+ const snap=await getDocs(query(collection(db,"absensi"),where("tanggal","==",date)));
+ const rows=snap.docs.map(d=>d.data()).filter(a=>!cls||a.kelas===cls).sort((a,b)=>String(a.waktu||"").localeCompare(String(b.waktu||"")));
  const quote=v=>`"${String(v??"").replace(/"/g,'""')}"`;
  const csv=["Tanggal,Waktu,NISN,Nama,Kelas,Status,Pencatat",...rows.map(a=>[a.tanggal,a.waktu,a.nisn,a.nama,a.kelas,a.status,a.pencatat].map(quote).join(","))].join("\r\n");
  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}), url=URL.createObjectURL(blob), a=document.createElement("a");
