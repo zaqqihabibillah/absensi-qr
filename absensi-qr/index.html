@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f172a"><title>Login Guru | Presensi QR SMPN 1 Sijunjung</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-card">
+      <div class="brand-mark">S</div>
+      <p class="eyebrow">SMP NEGERI 1 SIJUNJUNG</p>
+      <h1>Presensi Digital</h1>
+      <p class="muted">Masuk menggunakan akun guru yang telah didaftarkan oleh administrator.</p>
+      <form id="login-form" class="stack">
+        <label>Email Guru<input id="email" type="email" autocomplete="username" required placeholder="nama@sekolah.sch.id"></label>
+        <label>Password<input id="password" type="password" autocomplete="current-password" required placeholder="Masukkan password"></label>
+        <button class="button primary" type="submit">Masuk ke Dashboard</button>
+        <p id="login-message" class="notice" role="status" aria-live="polite"></p>
+      </form>
+      <p class="fine-print">Akses terbatas untuk guru dan tenaga kependidikan.</p>
+    </section>
+  </main>
+  <script type="module" src="./js/auth.js"></script>
+</body></html>

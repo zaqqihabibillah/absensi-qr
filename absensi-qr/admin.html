@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0f172a"><title>Administrasi | Presensi QR SMPN 1 Sijunjung</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./scanner.html"><span class="brand-mark small">S</span><span><b>Presensi QR</b><small>SMPN 1 Sijunjung</small></span></a><nav><a href="./scanner.html">Scanner</a><a class="active" href="./admin.html">Administrasi</a><button id="logout-button" class="button ghost small-button">Keluar</button></nav></header>
+  <main class="container">
+    <div class="page-heading"><div><p class="eyebrow">PENGELOLAAN DATA</p><h1>Administrasi Presensi</h1><p class="muted">Kelola data induk siswa, kartu QR, dan laporan kehadiran.</p></div></div>
+    <section class="stats-grid"><article class="stat-card"><span>Total siswa aktif</span><strong id="total-students">—</strong></article><article class="stat-card"><span>Hadir hari ini</span><strong id="total-present">—</strong></article><article class="stat-card"><span>Belum tercatat</span><strong id="total-missing">—</strong></article></section>
+    <section class="admin-grid">
+      <article class="panel"><div class="panel-head"><div><h2>Tambah Siswa</h2><p class="muted">Satu siswa per formulir.</p></div></div>
+        <form id="student-form" class="form-grid"><label>NISN<input id="student-nisn" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required placeholder="10 digit NISN"></label><label>Nama lengkap<input id="student-name" required placeholder="Nama siswa"></label><label>Kelas<input id="student-class" required placeholder="Contoh: VII-A"></label><button class="button primary" type="submit">Simpan Siswa</button></form><p id="student-message" class="notice" role="status"></p>
+      </article>
+      <article class="panel"><div class="panel-head"><div><h2>Import CSV</h2><p class="muted">Format kolom: NISN,Nama,Kelas.</p></div></div>
+        <label class="file-drop">Pilih file CSV<input id="csv-file" type="file" accept=".csv,text/csv"></label><button id="import-csv" class="button secondary full-width">Import Data Siswa</button><p id="import-message" class="notice" role="status"></p>
+      </article>
+    </section>
+    <section class="panel"><div class="panel-head wrap-head"><div><h2>Data Siswa & Kartu QR</h2><p class="muted">QR Code berisi NISN siswa.</p></div><div class="toolbar"><input id="student-search" placeholder="Cari nama / NISN"><select id="class-filter"><option value="">Semua kelas</option></select><button id="print-cards" class="button secondary">Cetak kartu</button></div></div><div id="student-grid" class="student-grid"><p class="empty">Memuat data siswa…</p></div></section>
+    <section class="panel"><div class="panel-head wrap-head"><div><h2>Rekap Kehadiran</h2><p class="muted">Filter berdasarkan tanggal dan kelas.</p></div><div class="toolbar"><input id="report-date" type="date"><select id="report-class"><option value="">Semua kelas</option></select><button id="export-csv" class="button primary">Unduh CSV</button></div></div><div class="table-wrap"><table><thead><tr><th>Waktu</th><th>NISN</th><th>Nama</th><th>Kelas</th><th>Status</th><th>Pencatat</th><th>Ubah status</th></tr></thead><tbody id="report-body"><tr><td colspan="7" class="empty">Memuat laporan…</td></tr></tbody></table></div></section>
+  </main>
+  <script type="module" src="./js/admin.js"></script>
+</body></html>

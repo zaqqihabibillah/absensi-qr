@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function validStudent(data) {
+      return data.keys().hasAll(['nama','kelas','aktif'])
+        && data.nama is string && data.nama.size() > 0 && data.nama.size() <= 120
+        && data.kelas is string && data.kelas.size() > 0 && data.kelas.size() <= 30
+        && data.aktif is bool;
+    }
+    match /siswa/{nisn} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && nisn.matches('^[0-9]{10}$') && validStudent(request.resource.data);
+      allow delete: if false;
+    }
+    match /absensi/{recordId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasAll(['nisn','nama','kelas','tanggal','waktu','status','pencatat'])
+        && request.resource.data.nisn is string
+        && request.resource.data.nisn.matches('^[0-9]{10}$')
+        && request.resource.data.tanggal is string
+        && recordId == request.resource.data.tanggal + '_' + request.resource.data.nisn
+        && request.resource.data.status in ['Hadir','Sakit','Izin','Alpa'];
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','diubahOleh','diubahPada'])
+        && request.resource.data.status in ['Hadir','Sakit','Izin','Alpa'];
+      allow delete: if false;
+    }
+  }
+}
